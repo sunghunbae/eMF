@@ -1,19 +1,20 @@
-What is eMF ?
+What is eMF?
 =============
 
-eMF stands for easy Model Free. Why do I have to write another model free program ?
+eMF stands for easy Model Free. Why do I have to write another model free program?
 It was originally written to implement distributed correlation time approaches such as 
-Cole-Cole and Lorentzian spectral density functions in the model free analysis of 
+Cole-Cole and Lorentzian spectral density functions for the model free analysis of 
 unfolded or disordered proteins. During my time with Drs. Peter E. Wright and Jane H. Dyson
 at The Scripps Research Institute in La Jolla, CA, I studied the ps-ns dynamics of 
 wild type and mutant prion proteins. Prion protein has a very long stretch of disordered 
 amino acid sequence at the N-terminus which significantly affects observed NMR relaxation 
-rates of the whole protein including the C-terminal structured domain. So, prion protein 
+rates of the whole protein including the C-terminal structured domain. Apparently, prion protein 
 should be described by an ensemble of vastly different overall structures due to 
 the disordered N-terminal domain.
-eMF was born from an attempt to address this problem by applying the 'distributed' correlation time.
+eMF was born from an attempt to resolve this problem by applying the 'distributed' correlation time.
 Although it was found later that mean rotational diffusion tensor determined from conventional
-methods should be good enough for the prion case, eMF remained as my choice of model free analysis tool.
+methods should be good enough for the prion case, eMF remained as my choice of model free analysis tool
+because it is easy and straightforward.
 
 ### Features
 
@@ -23,13 +24,17 @@ methods should be good enough for the prion case, eMF remained as my choice of m
 - fit extended Lipari-Szabo models with selection options of BIC and AIC
 - xmgrace plot of select model spectral density function
 
-How to install ?
+How to install?
 ================
 
-You need the following two packages installed in your system:
+### Dependencies
+
+You need the following two packages for proper installation:
 
 - CMake
 - GNU Scientific Library (GSL)
+
+### Make
 
 ```
 $ mkdir build
@@ -48,7 +53,7 @@ SET(CMAKE_INSTALL_PREFIX ~/bin )
 Please make sure that eMF is accessible in your working directory 
 by adding ```~/bin``` or your destination directory in the 'path'.
 
-How to prepare input files ?
+How to prepare input files?
 ============================
 
 You need to prepare config and data files.
@@ -161,8 +166,8 @@ fitmodel -select BIC
  11 1 600.13  1.2146  0.0245 10.0442  0.2884  0.7720  0.1080
 ```
 
-How to run ?
-============
+How to run?
+===========
 
 ### Help
 ```
