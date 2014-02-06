@@ -233,7 +233,7 @@ Run
 $ eMF -A dhfr.dat
 ```
 
-For xmgrace outputs (resid_0###.xmgr, ...):
+For xmgrace outputs (```resid_0007.xmgr, resid_0008.xmgr, ...```):
 ```
 $ eMF -x resid -A dhfr.dat
 ```
