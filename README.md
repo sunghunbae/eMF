@@ -174,38 +174,6 @@ $ eMF -c dhfr.conf -s dhfr.dat
 ```
 Output will be like:
 ```
-  eMF 1.0 by Sung-Hun Bae (2008)
-
-# data                          = dhfr.dat
-#   number of lines             = 262
-#   number of clusters          = 2 (0, 1)
-#   number of residues          = 131
-#   number of magnetic fields   = 2 (500.38, 600.13)
-# configuration                 = dhfr-jw.conf
-#   gamma H                     = 26.7519
-#   gamma X                     = -2.71
-#   CSA X (ppm)                 = -172
-#   bond length (A)             = 1.02
-#   estimation of diffusion     = No
-#   optimization of diffusion   = No
-#   model selection criterion   = BIC
-#   Monte Carlo simulation      = No
-#   error adjusted              = Yes
-#     R1 error minimum (%)      = 0, 0
-#     R1 error scale            = 1, 1
-#     R2 error minimum (%)      = 0, 0
-#     R2 error scale            = 1, 1
-#     hnNOE error minimum       = 0, 0
-#     hnNOE error scale         = 1, 1
-# diffusion tensor              = not defined
-# spectral density function     = Lipari-Szabo extended
-
-#    Param    Value [   Lower ...   Upper | GRD,    Step ] Convergence
-#    S2f      0.000 [   0.000 ...   0.000 |   0, 1.0e-03 ] 1.0e-05
-#    S2s      0.000 [   0.000 ...   0.000 |   0, 1.0e-03 ] 1.0e-05
-#    te       0.000 [   0.000 ...   0.000 |   0, 1.0e-03 ] 1.0e-05
-#    Rex      0.000 [   0.000 ...   0.000 |   0, 1.0e-03 ] 1.0e-05
-
 # REDUCED SPECTRAL DENSITY
 # 
 # B0= 500.38 MHz, 0.87H freq.= 435.33 MHz or  2.735e+09 rad/s
@@ -220,10 +188,6 @@ Output will be like:
      2 2.73e+00 9.90e-02 2.56e-01 1.07e-02 4.53e-03 6.82e-04  600.13
      3 3.15e+00 9.46e-02 3.43e-01 9.31e-03 5.27e-03 7.13e-04  500.38
      3 2.98e+00 1.38e-01 2.46e-01 1.03e-02 4.03e-03 9.79e-04  600.13
-     4 2.86e+00 9.34e-02 3.34e-01 6.67e-03 5.62e-03 1.05e-03  500.38
-     4 2.80e+00 4.30e-02 2.39e-01 5.25e-03 4.05e-03 4.98e-04  600.13
-     5 3.21e+00 8.45e-02 3.34e-01 1.16e-02 5.15e-03 1.27e-03  500.38
-     5 3.16e+00 8.29e-02 2.45e-01 9.65e-03 4.01e-03 7.26e-04  600.13
 ```
 
 ### Estimation and optimization of diffusion tensor
