@@ -213,7 +213,7 @@ Output will be like:
      3 2.98e+00 1.38e-01 2.46e-01 1.03e-02 4.03e-03 9.79e-04  600.13
 ```
 
-### Estimation and optimization of diffusion tensor
+### Estimating and optimizing diffusion tensor
 
 | diffusion tensor  | parameter(s)        | eMF symbol |
 |-------------------|---------------------|------------|
@@ -224,8 +224,9 @@ Output will be like:
 
 Diffusion tensor should be determined before fitting the models.
 In general, determination of diffusion tensor is an iterative process
-and takes several trials. So, you can comment out the last
-line in the config file until you find a suitable diffusion tensor:
+and takes several trials. So, you can disable the ```fitmodel``` 
+at the last line in the config file 
+until you find a suitable diffusion tensor:
 
 ```
 #fitmodel -select BIC
