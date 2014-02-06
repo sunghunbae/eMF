@@ -65,7 +65,8 @@ You may change the destination directory defined the ```CMakeLists.txt``` file :
 SET(CMAKE_INSTALL_PREFIX ~/bin )
 ```
 
-Please make sure that eMF is accessible in your working directory 
+Please make sure that ```eMF``` and ```eMF-digest``` 
+is accessible from your working directory 
 by adding ```~/bin``` or your destination directory in the 'path'.
 
 How to prepare input files?
@@ -235,7 +236,7 @@ Run
 $ eMF -A dhfr.dat 
 ```
 
-### Fit models
+### Fitting models
 
 Once the diffusion tensor is determined, you can disable 
 estimation and optimization and enable fitmodel:
@@ -315,9 +316,10 @@ RESIDUE 7     alpha   34.971
 # FIT M1  600.13  1.2784         11.1412          0.8271        
 ```
 
-### Extract selected models
+### Digesting selected models
 
-Selected models and parameters can be conveniently extracted from
+Selected models are marked by ```>``` in the eMF output. 
+Parameters of these models can be conveniently extracted from
 the eMF output file by ```eMF-digest```:
 
 ```
