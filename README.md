@@ -52,6 +52,7 @@ You need the following two packages for proper installation:
 ```
 $ mkdir build
 $ cd build
+$ cmake ..
 $ make 
 $ make install
 ```
