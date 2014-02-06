@@ -32,6 +32,11 @@ Please cite the following paper if you use eMF.
 Sung-Hun Bae, Giuseppe Legname, Ana Serban, Stanley B. Prusiner, Peter E. Wright, and H. Jane Dyson
 Biochemistry 2009 48 (34), 8120-8128 http://pubs.acs.org/doi/abs/10.1021/bi900923b
 
+### Related
+
+- github/sunghunbae/BE2
+
+
 How to install?
 ================
 
