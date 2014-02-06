@@ -34,7 +34,7 @@ Biochemistry 2009 48 (34), 8120-8128 http://pubs.acs.org/doi/abs/10.1021/bi90092
 
 ### Related
 
-- github/sunghunbae/BE2
+- http://github.com/sunghunbae/BE2
 
 
 How to install?
