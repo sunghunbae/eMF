@@ -137,16 +137,15 @@ fitmodel -select BIC
 ```
 
 ### Data file
-
-- column 1 : residue number
-- column 2 : cluster number, used for inclusion or exclusion of data
-- column 3 : B0, field strength in MHz
-- column 4-5 : R1 relaxation rate and error (1/s)
-- column 6-7 : R2 relaxation rate and error (1/s)
-- column 8-9 : {1H}-X NOE and error
-- column 10  : (only for distributed) tc distribution file name
-
 ```
+# column 1   : residue number
+# column 2   : cluster number, used for inclusion or exclusion of data
+# column 3   : B0, field strength in MHz
+# column 4-5 : R1 relaxation rate and error (1/s)
+# column 6-7 : R2 relaxation rate and error (1/s)
+# column 8-9 : {1H}-X NOE and error
+# column 10  : (only for distributed) tc distribution file name
+
   7 1 500.38  1.6265  0.0691 10.7276  0.4488  0.7760  0.0400
   7 1 600.13  1.2629  0.0436 11.1164  0.7537  0.8070  0.0880
   8 1 500.38  1.6935  0.0442 10.8300  0.3911  0.7730  0.0240
