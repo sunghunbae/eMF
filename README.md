@@ -13,7 +13,7 @@ should be described by an ensemble of vastly different overall structures due to
 the disordered N-terminal domain.
 eMF was born from an attempt to resolve this problem by applying the 'distributed' correlation time.
 Although it was found later that mean rotational diffusion tensor determined from conventional
-methods should be good enough for the prion case, eMF remained as my choice of model free analysis tool
+methods should be good enough for the prion case, eMF is still my choice of model free analysis tool
 because it is easy and straightforward.
 
 ### Features
