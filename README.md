@@ -28,7 +28,7 @@ It was written to be easy and straightforward to use and to put together recent 
 
 Please cite the following paper if you use eMF.
 
-Prion Proteins with Pathogenic and Protective Mutations Show Similar Structure and Dynamics
+- Prion Proteins with Pathogenic and Protective Mutations Show Similar Structure and Dynamics.
 Sung-Hun Bae, Giuseppe Legname, Ana Serban, Stanley B. Prusiner, Peter E. Wright, and H. Jane Dyson
 Biochemistry 2009 48 (34), 8120-8128 http://pubs.acs.org/doi/abs/10.1021/bi900923b
 
