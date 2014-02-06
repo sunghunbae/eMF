@@ -57,8 +57,8 @@ $ make
 $ make install
 ```
 
-By default, an executable binary file, eMF, and a perl script, eMF-digest, 
-will be installed in ```~/bin``` directory.
+By default, an executable binary file(```eMF```) and 
+a perl script(```eMF-digest```) will be installed in ```~/bin``` directory.
 You may change the destination directory defined the ```CMakeLists.txt``` file :
 
 ```
