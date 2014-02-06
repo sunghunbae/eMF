@@ -159,6 +159,20 @@ fitmodel -select BIC
  11 1 600.13  1.2146  0.0245 10.0442  0.2884  0.7720  0.1080
 ```
 
+How to run ?
+============
+
+### Help
+```
+$ eMF -h
+```
+
+### Reduced spectral mapping
+Reduced spectral mapping only needs ```const``` definitions in the config file.
+```
+$ eMF -c dhfr.conf -s dhfr.dat
+```
+
 ### Estimation and optimization of diffusion tensor
 
 | diffusion tensor  | parameter(s)        | eMF symbol |
@@ -177,6 +191,11 @@ line in the config file until you find a suitable diffusion tensor:
 #fitmodel -select BIC
 ```
 
+Run 
+```
+$ eMF -c dhfr.conf -A dhfr.dat 
+```
+
 ### Fit models
 
 Once the diffusion tensor is determined, you can disable 
@@ -189,4 +208,12 @@ estimation and optimization and enable fitmodel:
 ```
 ```
 fitmodel -select BIC
+```
+Run
+```
+$ eMF -c dhfr.conf -A dhfr.dat
+```
+For xmgrace outputs (resid_0###.xmgr, ...):
+```
+$ eMF -c dhfr.conf -x resid -A dhfr.dat
 ```
