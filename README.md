@@ -161,13 +161,32 @@ fitmodel -select BIC
 
 ### Estimation and optimization of diffusion tensor
 
-Generally, diffusion tensor should be determined before fitting the models.
+| diffusion tensor  | parameter(s)        | eMF symbol |
+|-------------------|---------------------|------------|
+| isotropic         | tc                  | I          |
+| axially symmetric | tc, Dr              | A          |
+| anisotropic       | tc, Dr, phi, theta  | N          |
+| distributed       | (datafile)          | D          |
 
-+===================+=====================+============+
-| diffusion tensor  + parameter(s)        + eMF symbol +
-+===================+=====================+============+
-+ isotropic         + tc                  + I          +
-+ axially symmetric + tc, Dr              + A          +
-+ anisotropic       + tc, Dr, phi, theta  + N          +
-+ distributed       + (datafile)          + D          +
-+===================+=====================+============+
+Diffusion tensor should be determined before fitting the models.
+In general, determination of diffusion tensor is an iterative process
+and takes several trials. So, you can comment out the last
+line in the config file until you find a suitable diffusion tensor:
+
+```
+#fitmodel -select BIC
+```
+
+### Fit models
+
+Once the diffusion tensor is determined, you can disable 
+estimation and optimization and enable fitmodel:
+```
+#estimate -cluster 1
+```
+```
+#optimize -cluster 1 -s2 0.7
+```
+```
+fitmodel -select BIC
+```
