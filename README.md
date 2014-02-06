@@ -57,6 +57,9 @@ as templates.
 
 ### Config file
 
+Default config filename is ```emf.conf``` but you may use 
+different config filename by ```-c [filename]```.
+
 ```
 #
 # eMF configuration
@@ -169,7 +172,7 @@ $ eMF -h
 ### Reduced spectral mapping
 Reduced spectral mapping only needs ```const``` definitions in the config file.
 ```
-$ eMF -c dhfr.conf -s dhfr.dat
+$ eMF -s dhfr.dat
 ```
 Output will be like:
 ```
@@ -209,7 +212,7 @@ line in the config file until you find a suitable diffusion tensor:
 
 Run 
 ```
-$ eMF -c dhfr.conf -A dhfr.dat 
+$ eMF -A dhfr.dat 
 ```
 
 ### Fit models
@@ -227,23 +230,23 @@ fitmodel -select BIC
 ```
 Run
 ```
-$ eMF -c dhfr.conf -A dhfr.dat
+$ eMF -A dhfr.dat
 ```
 
 For xmgrace outputs (resid_0###.xmgr, ...):
 ```
-$ eMF -c dhfr.conf -x resid -A dhfr.dat
+$ eMF -x resid -A dhfr.dat
 ```
 Output will be like:
 ```
   eMF 1.0 by Sung-Hun Bae (2008)
 
-# data                          = dhfr-test.dat
+# data                          = dhfr.dat
 #   number of lines             = 10
 #   number of clusters          = 2 (0, 1)
 #   number of residues          = 5
 #   number of magnetic fields   = 2 (500.38, 600.13)
-# configuration                 = dhfr-fit-models.conf
+# configuration                 = emf.conf
 #   gamma H                     = 26.7519
 #   gamma X                     = -2.71
 #   CSA X (ppm)                 = -172
