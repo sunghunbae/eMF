@@ -57,7 +57,8 @@ $ make
 $ make install
 ```
 
-By default, an executable binary file, eMF, will be installed in ```~/bin``` directory.
+By default, an executable binary file, eMF, and a perl script, eMF-digest, 
+will be installed in ```~/bin``` directory.
 You may change the destination directory defined the ```CMakeLists.txt``` file :
 
 ```
@@ -312,4 +313,23 @@ RESIDUE 7     alpha   34.971
 # FIT M1  500.38  1.6351         10.4611          0.8057        
 # EXP     600.13  1.2629  0.0436 11.1164  0.7537  0.8070  0.0880
 # FIT M1  600.13  1.2784         11.1412          0.8271        
+```
+
+### Extract selected models
+
+Selected models and parameters can be conveniently extracted from
+the eMF output file by ```eMF-digest```:
+
+```
+$ eMF-digest dhfr-test.out
+```
+
+Output will be like:
+```
+# Resid  S2.val  S2.err S2s.val S2s.err S2f.val S2f.err  te.val  te.err Rex.val Rex.err      X2     dof     BIC     AIC   Model
+      7   0.828   0.018   0.828   0.018   1.000   0.000   0.000   0.000   0.000   0.000   1.099   5.000   2.890   3.099       1
+      8   0.836   0.110   0.836   0.110   1.000   0.000   0.011   0.216   0.660   0.970   0.552   3.000   5.927   6.552       4
+      9   0.816   0.022   0.816   0.022   1.000   0.000   0.000   0.000   4.270   0.410   3.180   4.000   6.763   7.180       3
+     10   0.842   0.014   0.842   0.014   1.000   0.000   0.000   0.000   0.000   0.000   1.616   5.000   3.407   3.616       1
+     11   0.781   0.011   0.781   0.011   1.000   0.000   0.000   0.000   0.000   0.000   8.499   5.000  10.291  10.499       1
 ```

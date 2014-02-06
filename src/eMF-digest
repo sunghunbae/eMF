@@ -1,0 +1,147 @@
+#!/usr/bin/perl
+my @P = (); # parameters to display
+my @R = ();
+my $idx;
+
+sub help 
+{
+  my $line;
+  while ($line = <DATA>) { print STDERR "$line"; }
+  exit ($_[0]);
+}
+
+if (!@ARGV) { help(0); }
+open(INPUT, $ARGV[0]);
+@lines = <INPUT>;
+close (INPUT);
+if ( $#ARGV > 0 ) { @P = @ARGV[1..$#ARGV]; }
+
+foreach $line (@lines) {
+  if ($line =~ m/^[^#]/ && $line !~ m/^(\s)*$/)
+  {
+    chomp;
+    $line =~ s/^\s+|\s+$//g;
+    @c = split /\s+/, $line;
+    # diffusion parameters
+    if ($c[0] =~ m/RESIDUE/) {
+      $resid = $c[1];
+      $R{$resid}{dif}{$idx}=$c[2];
+      $R{$resid}{val}{$idx}=$c[3];
+      $R{$resid}{err}{$idx}=$c[4];
+      }
+    # internal parameters, best (accepted) model only
+    if ($c[0] =~ m/^[>]/) {
+      $idx=0;
+      $R{$resid}{mdl} = substr $c[0],-1,1;
+      for ($i=1; $i <= $#c; $i++) {
+        $R{$resid}{par}{$idx}=$c[$i];
+        $R{$resid}{val}{$idx}=$c[$i+1];
+	if ($c[$i+2] =~ m/^[-0123456789]/) {
+        	$R{$resid}{err}{$idx}=$c[$i+2];
+		$i += 2;
+	} else {
+		$i += 1;
+	}
+        $idx++;
+        }
+     }
+  }
+}
+
+if (! @P) {
+  $line=0;
+  foreach $resid (sort {$a <=> $b} keys %R) {
+    $line++;
+    #header
+    if ($line == 1) {
+      printf "# %5s ","Resid";
+      # sort numerically ascending
+      foreach $idx (sort {$a <=> $b} keys %{$R{$resid}{par}}) {
+        if (defined $R{$resid}{err}{$idx}) {
+          printf "%7s %7s ",$R{$resid}{par}{$idx}.".val",$R{$resid}{par}{$idx}.".err";
+	}
+        else {
+          printf "%7s ",$R{$resid}{par}{$idx};
+	}
+      }
+      printf "%7s\n","Model";
+    }
+    # data
+    printf "%7d ",$resid;
+    # sort numerically ascending
+    foreach $idx (sort {$a <=> $b} keys %{$R{$resid}{par}}) {
+      if (defined $R{$resid}{err}{$idx}) {
+        printf "%7.3f %7.3f ",$R{$resid}{val}{$idx},$R{$resid}{err}{$idx};
+      } else {
+        printf "%7.3f ",$R{$resid}{val}{$idx};
+      }
+    }
+    printf "%7d\n",$R{$resid}{mdl}
+  }
+}
+else
+{
+  $line=0;
+  foreach $resid (sort {$a <=> $b} keys %R) {
+    $line++;
+    #header
+    if ($line == 1) {
+      printf "# %5s ","Resid";
+      foreach $param (@P) {
+        if ($param =~ m/model/i) {
+          printf "%7s ","Model";
+        }
+        else {
+          foreach $idx (sort {$a <=> $b} keys %{$R{$resid}{par}}) {
+            if ($R{$resid}{par}{$idx} =~ m/$param/i) {
+              if (defined $R{$resid}{err}{$idx}) {
+                printf "%7s %7s ",$R{$resid}{par}{$idx}.".val",$R{$resid}{par}{$idx}.".err";
+	      }
+              else {
+                printf "%7s ",$R{$resid}{par}{$idx};
+	      }
+            }
+          }
+        }
+      }
+    printf "\n";
+    }
+    # data
+    printf "%7d ",$resid;
+    foreach $param (@P) {
+      if ($param =~ m/model/i) {
+        printf "%7d ",$R{$resid}{mdl};
+      }
+      else {
+        foreach $idx (sort {$a <=> $b} keys %{$R{$resid}{par}}) {
+          if ($R{$resid}{par}{$idx} =~ m/$param/i) {
+            if (defined $R{$resid}{err}{$idx}) {
+              printf "%7.3f %7.3f ",$R{$resid}{val}{$idx},$R{$resid}{err}{$idx};
+            } else {
+              printf "%7.3f ",$R{$resid}{val}{$idx};
+            }
+          }
+        }
+      }
+    }
+    printf "\n";
+  }
+}
+
+__DATA__
+
+  eMF-digest 				Sung-Hun Bae, 2008
+
+  Selected model and its parameters are digested from given eMF output file. 
+  All parameters are shown by default but a subset can be selected.
+
+  usage:
+  eMF-digest <eMF output filename> [S2s,S2f,te,Rex,model] [...] ...
+        
+  examples:
+  eMF-digest a.out 			show all parameters and model number
+  eMF-digest a.out model		show only selected model number
+  eMF-digest a.out S2s 			show only S2s
+  eMF-digest a.out S2 			show S2(=S2s*S2f), S2s, S2f
+  eMF-digest a.out te Rex model 	show te, Rex, and model
+
