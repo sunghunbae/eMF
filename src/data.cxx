@@ -110,6 +110,7 @@ void initialize (ALLDATA &A,int NM,int NF,int NR,int NK,int MC)
   strcpy(A.pid[_psi_],"psi");
   strcpy(A.fid[LX2_R1R2NOE],"local X2 of {R1,R2,NOE}");
   strcpy(A.fid[GX2_R2_OVER_R1],"global X2 of R2/R1");
+  strcpy(A.fid[GX2_R2_OVER_R1_SIMPLE],"global X2 of (4/3)(R1')/(2R2'-R1')");
   strcpy(A.fid[GX2_R1R2NOE_FM],"global X2 of {R1,R2,NOE} at float model");
   strcpy(A.fid[GX2_R1R2NOE_BM],"global X2 of {R1,R2,NOE} at best model");
   strcpy(A.fid[GX2_LIKELIHOOD],"global X2 of likelihood");

@@ -51,6 +51,7 @@ int 	MLE_cluster=-1;
 
 /* diffusion tensor estimation by R2/R1 */
 bool 	estimate = false;
+int     estimateFunc = GX2_R2_OVER_R1;
 double 	EstNOECut = 0.0;
 double 	EstSTDCut = 0.0;
 int 	EstCluster=-1;
@@ -89,7 +90,7 @@ bool opt_verb = false;
 int main(int argc, char *argv[])
 {
   /* signature */
-  printf("  eMF 1.0 by Sung-Hun Bae (2008)\n\n");
+  printf("  eMF 1.1 by Sung-Hun Bae 2008-2014\n\n");
 
   extern gsl_rng * rng;
   const gsl_rng_type * T = gsl_rng_ranlux389;
@@ -414,7 +415,9 @@ int main(int argc, char *argv[])
 
   /* FIT GLOBAL MODELS options: -I, -A, -N, -D */
 
+  // if diffusion is set to global
   if (D & _GLOBAL_) {
+    //gsl_vector *global = gsl_vector_alloc (NP);
     extern int MC,OptMaxIter;
     double chisq, chisq_gr;
     int n,iter=0;
@@ -436,6 +439,7 @@ int main(int argc, char *argv[])
       A.p[_Rex_]=0.0;
       A.p[_S2f_]=1.0;
       A.p[_S2s_]=0.8;
+
       for (i=0;i<NP;i++) {
 	if ((A.attr[i] & P_LOCAL) == 0 && (A.attr[i] & P_ACTIVE) && 
 	  (A.attr[i] & P_FIXED) == 0)
@@ -444,9 +448,88 @@ int main(int argc, char *argv[])
 	  A.is[i] = false;
 	}
 
-      grid_search (A, GX2_R2_OVER_R1, chisq_gr, true);
+      if (estimateFunc == GX2_R2_OVER_R1 ) 
+      {
+        grid_search (A, GX2_R2_OVER_R1, chisq_gr, true);
 
-      global_minimize(A, GX2_R2_OVER_R1, chisq, M_SIMPLEX);
+        global_minimize(A, GX2_R2_OVER_R1, chisq, M_SIMPLEX);
+
+        gsl_vector * relax = gsl_vector_calloc (A.NF*3);
+        for (A.r=0;A.r<A.NR;A.r++) 
+        {
+          R1R2NOE (&A,relax,NULL);
+          for (f=0;f<A.NF;f++) 
+          {
+	    /* only if both R1 and R2 are available */
+	    if (gsl_matrix_get(A.X, A.r, f*3+0) > 0.0 &&
+	        gsl_matrix_get(A.X, A.r, f*3+1) > 0.0 && A.flag[A.r]) 
+            {
+              double MHz = gsl_matrix_get(A.X,A.r,f*3+0);
+	      double R1 = gsl_matrix_get(A.Y,A.r,f*3+0);
+	      double R2 = gsl_matrix_get(A.Y,A.r,f*3+1);
+	      double dR1 = gsl_matrix_get(A.SIG,A.r,f*3+0);
+	      double dR2 = gsl_matrix_get(A.SIG,A.r,f*3+1);
+	      double sig2 = SQR(R2/R1)*(SQR(dR1/R1)+SQR(dR2/R2));
+	      double fR1 = gsl_vector_get(relax,3*f+0); // fitted R1
+	      double fR2 = gsl_vector_get(relax,3*f+1); // fitted R2
+	      double dy=R2/R1-fR2/fR1;
+	      double chisq = dy*dy/sig2;
+              printf(_INFO_ "RESIDUE %4d %7.3f MHz exp= %7.3f cal= %7.3f dy= %7.3f chisq= %7.3f\n",
+                A.num[A.r],MHz,R2/R1,fR2/fR1,dy,chisq);
+	    }
+	  }
+        }
+        gsl_vector_free (relax);
+      }
+    
+
+      if (estimateFunc == GX2_R2_OVER_R1_SIMPLE ) 
+      {
+        grid_search (A, GX2_R2_OVER_R1_SIMPLE, chisq_gr, true);
+        global_minimize(A, GX2_R2_OVER_R1_SIMPLE, chisq, M_SIMPLEX);
+
+        const double c0 = gamma_x/(5.0*gamma_h);
+        const double c1 = 7.0*SQR(0.921/0.87);
+        const double c2 = 13.0/2.0*SQR(0.955/0.87);
+        for (A.r=0;A.r<A.NR;A.r++) 
+        {
+          for (f=0;f<A.NF;f++) 
+          {
+	    if (gsl_matrix_get(A.X, A.r, f*3+0) > 0.0 &&
+	        gsl_matrix_get(A.X, A.r, f*3+1) > 0.0 && 
+	        gsl_matrix_get(A.X, A.r, f*3+2) > 0.0 && 
+                A.flag[A.r]) 
+            {
+              double MHz = gsl_matrix_get(A.X,A.r,3*f+0);
+              double wh = 1.0E-3*2.0*M_PI*MHz; // 1e+9 (rad/s)
+              double wx = wh*gamma_x/gamma_h; // 1e+9 (rad/s)
+              double jwx,jw0;
+              Jw (0.,&A,jw0,NULL);
+              Jw (wx,&A,jwx,NULL);
+
+	      double R1 = gsl_matrix_get(A.Y,A.r,f*3+0);
+	      double R2 = gsl_matrix_get(A.Y,A.r,f*3+1);
+              double NOE = gsl_matrix_get(A.Y,A.r,f*3+2);
+	      double dR1 = gsl_matrix_get(A.SIG,A.r,f*3+0);
+	      double dR2 = gsl_matrix_get(A.SIG,A.r,f*3+1);
+              double dNOE = gsl_matrix_get(A.SIG,A.r,f*3+2);
+	      double HF = -c0*(1.0-NOE)*R1;
+              double dHF = -c0*((-dNOE)*R1+(1.0-NOE)*dR1);
+	      double R1p = R1-c1*HF;
+	      double R2p = R2-c2*HF;
+              double dR1p = dR1-c1*dHF;
+              double dR2p = dR2-c2*dHF;
+              double rho = (4.0/3.0)*(R1p)/(2.0*R2p-R1p);
+	      double sig2 = SQR(rho)*(SQR((2.0*dR2p-dR1p)/(2.0*R2p-R1p))+SQR(dR1p/R1p));
+
+	      double dy=rho-jwx/jw0;
+	      double chisq = dy*dy/sig2;
+              printf(_INFO_ "RESIDUE %4d %7.3f MHz exp= %7.3f cal= %7.3f dy= %7.3f chisq= %7.3f\n",
+                A.num[A.r],MHz,rho,jwx/jw0,dy,chisq);
+	    } // conditions
+	  } // f
+        } // A.r
+      }
 
       } // estimate
 
@@ -466,29 +549,36 @@ int main(int argc, char *argv[])
 	else
 	  select_optimizer (A,OptCluster,OptS2);
 
-	for (chisq=0.0,r=0;r<NR;r++) { 
-	  if(A.flag[r]) {
+	for (chisq=0.0,r=0;r<NR;r++) 
+        { 
+	  if(A.flag[r]) 
+          {
 	    A.r = r;
 	    for (m=1;m<=NM;m++) 
 	      fitmodel(m,0,A);
 	    select_model(A);
 	    chisq += gsl_matrix_get(A.x2,r,A.best[r]);
-	    }// flag
-	  }// r
+	  }// flag
+	}// r
 
 	select_optimizer (A,OptCluster,OptS2);
 	print_selected(A);
 
 	if (global_minimize (A, GX2_R1R2NOE_BM, chisq, M_LEVMAR)) break;
 
+        // store estimated parameters including global diffusion parameters
+        //for(i=0;i<NP;i++)
+        //  gsl_vector_set(global,i,A.p[i]);
+
 	iter++;
 
 	}// optimize
 
-	if(optimize && iter == OptMaxIter) {
-	  printf(_ERROR_ "not converged at max. iteration\n");
-	  exit(1);
-	  }
+        if (optimize & iter == OptMaxIter) 
+        {
+	    printf(_ERROR_ "not converged at max. iteration\n");
+	    exit(1);
+        }
 
 	/*
 	  internal parameters are fitted 
@@ -499,22 +589,36 @@ int main(int argc, char *argv[])
 	
 	select_all (A); 
 
-	for (r=0;r<NR;r++) { 
-	  if(A.flag[r]) {
-	    A.r = r;
-	    /* if best model is not determined yet */
-	    if (A.best[r] == 0) {
-	      for (m=1;m<=NM;m++) fitmodel(m,0,A);
-	      select_model(A);
-	      }
-	    /* if MC simulations are to be run */ 
-	    if (A.best[r] != 0 && MC > 0) {
-	      fitmodel(A.best[r],MC,A);
-	      }
-	    show_models(A, XMGR_PREFIX);
-	    printf("\n");
-	    }// flag
-	  }// r
+	for (r=0;r<NR;r++) 
+        { 
+	  A.r = r;
+	  /* if best model is not determined yet */
+	  if (A.best[r] == 0) 
+          {
+	    for (m=1;m<=NM;m++) 
+            {
+/*
+              for (i=0; i<NP; i++)
+              {
+                  gsl_matrix_set (A.vP[i],r,m, gsl_vector_get(global,i));
+              }
+*/
+              fitmodel(m,0,A);
+            }
+	    select_model(A);
+	  }
+
+	  /* if MC simulations are to be run */ 
+	  if (A.best[r] != 0 && MC > 0) 
+          {
+	    fitmodel(A.best[r],MC,A);
+	  }
+
+	  show_models(A, XMGR_PREFIX);
+	  printf("\n");
+	}// r
+
+        //gsl_vector_free(global);
 
 	} // -I,-A,-N,-D
 

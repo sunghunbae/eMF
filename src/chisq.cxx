@@ -90,6 +90,8 @@
 
 #include "emf.h"
 
+extern void (*Jw) (const double w,void *data,double &y,double *dyd);
+
 int chi_R1R2NOE_f (const gsl_vector *p, void *par, gsl_vector *c)
 {
   ALLDATA *A = (ALLDATA *)par;
@@ -452,6 +454,58 @@ double chi2 (ALLDATA &A, int func)
 	  fR2 = gsl_vector_get(relax,3*f+1); // fitted R2
 	  dy=R2/R1-fR2/fR1;
 	  chisq += dy*dy/sig2;
+	  /* impose square-well restrain on each chi-square */
+	  chisq += boundary_penalty (&A);
+	  } // conditions
+	} // f
+      } // A.r
+    gsl_vector_free (relax);
+  }
+
+  if (func == GX2_R2_OVER_R1_SIMPLE ) {
+    /* for estimation of diffusion tensor */
+    const extern int D;
+    const extern double gamma_h,gamma_x,r_xh,csa_x;
+
+    gsl_vector * relax = gsl_vector_calloc (A.NF*3);
+    const double c0 = gamma_x/(5.0*gamma_h);
+    const double c1 = 7.0*SQR(0.921/0.87);
+    const double c2 = 13.0/2.0*SQR(0.955/0.87);
+    double fv;
+    for (A.r=0;A.r<A.NR;A.r++) {
+      R1R2NOE (&A,relax,NULL);
+      for (f=0;f<A.NF;f++) {
+	/* only if R1, R2, NOE are available */
+	if (gsl_matrix_get(A.X, A.r, f*3+0) > 0.0 &&
+	    gsl_matrix_get(A.X, A.r, f*3+1) > 0.0 && 
+	    gsl_matrix_get(A.X, A.r, f*3+2) > 0.0 && 
+            A.flag[A.r]) 
+        {
+          double MHz = gsl_matrix_get(A.X,A.r,3*f+0);
+          double wh = 1.0E-3*2.0*M_PI*MHz; // 1e+9 (rad/s)
+          double wx = wh*gamma_x/gamma_h; // 1e+9 (rad/s)
+          double jwx,jw0;
+          Jw (0.,&A,jw0,NULL);
+          Jw (wx,&A,jwx,NULL);
+
+	  double R1 = gsl_matrix_get(A.Y,A.r,f*3+0);
+	  double R2 = gsl_matrix_get(A.Y,A.r,f*3+1);
+          double NOE = gsl_matrix_get(A.Y,A.r,f*3+2);
+	  double dR1 = gsl_matrix_get(A.SIG,A.r,f*3+0);
+	  double dR2 = gsl_matrix_get(A.SIG,A.r,f*3+1);
+          double dNOE = gsl_matrix_get(A.SIG,A.r,f*3+2);
+	  double HF = -c0*(1.0-NOE)*R1;
+          double dHF = -c0*((-dNOE)*R1+(1.0-NOE)*dR1);
+	  double R1p = R1-c1*HF;
+	  double R2p = R2-c2*HF;
+          double dR1p = dR1-c1*dHF;
+          double dR2p = dR2-c2*dHF;
+          double rho = (4.0/3.0)*(R1p)/(2.0*R2p-R1p);
+	  double sig2 = SQR(rho)*(SQR((2.0*dR2p-dR1p)/(2.0*R2p-R1p))+SQR(dR1p/R1p));
+
+	  dy=rho-jwx/jw0;
+	  chisq += dy*dy/sig2;
+
 	  /* impose square-well restrain on each chi-square */
 	  chisq += boundary_penalty (&A);
 	  } // conditions

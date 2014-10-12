@@ -83,6 +83,7 @@ void show_data (ALLDATA &A)
 	  gsl_matrix_get(A.SIG,r,f*3+2));
       } // f
     } // r
+  fflush(stdout);
 }
 
 void print_selected(ALLDATA &A)
@@ -98,6 +99,7 @@ void print_selected(ALLDATA &A)
 	}// 10 residues per line
       }// flag
   if (c%10!=0) printf("\n");
+  fflush(stdout);
 }
 
 void print_iteration(int iter,ALLDATA &A)
@@ -114,6 +116,7 @@ void print_iteration(int iter,ALLDATA &A)
       }
     }
   printf(")\n");
+  fflush(stdout);
 }
 
 void show_parameter (ALLDATA &A)
@@ -139,6 +142,7 @@ void show_parameter (ALLDATA &A)
 	A.grds[i],unit*A.step[i],unit*A.conv[i]);
       } // if 
     } // for
+  fflush(stdout);
 }
 
 void show_models (ALLDATA &A, char *XMGR_PREFIX)
@@ -341,10 +345,12 @@ void show_models (ALLDATA &A, char *XMGR_PREFIX)
     fprintf (xmgr,"&\n");
     fclose (xmgr);
     }// XMGR_PREFIX
+  fflush(stdout);
 }
 
 void show_info(const string s) 
 {
   string margin(_ITEM_WIDTH_-s.length(),' ');
   cout << _INFO_ << s << margin << "= ";
+  fflush(stdout);
 }

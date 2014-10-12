@@ -109,9 +109,10 @@ using namespace std;
 /* target function type */
 #define LX2_R1R2NOE	1
 #define GX2_R2_OVER_R1 	2
-#define GX2_R1R2NOE_FM 	3
-#define GX2_R1R2NOE_BM 	4
-#define GX2_LIKELIHOOD	5
+#define GX2_R2_OVER_R1_SIMPLE 	3
+#define GX2_R1R2NOE_FM 	4
+#define GX2_R1R2NOE_BM 	5
+#define GX2_LIKELIHOOD	6
 
 /* global minimization method */
 #define M_AUTO	  0	

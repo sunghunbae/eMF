@@ -59,7 +59,8 @@ void fitmodel (const int model, const int MC, ALLDATA &A)
   A.func = LX2_R1R2NOE;
   double chisq_min = 1e+9;
   size_t N = 100*mfit;
-  while (N > 0) {
+  while (N > 0) 
+  {
     for(i=0;i<NP;i++) {
       if (A.is[i])
 	A.p[i] = A.lb[i]+(A.ub[i]-A.lb[i])*gsl_rng_uniform(rng);
@@ -70,7 +71,7 @@ void fitmodel (const int model, const int MC, ALLDATA &A)
       for (i=0;i<NP;i++) store_p[i] = A.p[i];
       }
     N--;
-    }
+  }
   chisq_gr = chisq_min;
   for (i=0;i<NP;i++) A.p[i] = store_p[i];
 
@@ -89,6 +90,7 @@ void fitmodel (const int model, const int MC, ALLDATA &A)
   gsl_matrix_set (A.x2, A.r,model,chisq);
   gsl_matrix_set (A.bic,A.r,model,chisq + mfit*log((double)mdata));
   gsl_matrix_set (A.aic,A.r,model,chisq + mfit*2);
+
   for (i=0;i<NP;i++)
     gsl_matrix_set (A.vP[i],A.r,model,A.p[i]);
 
@@ -271,6 +273,7 @@ void select_model(ALLDATA &A)
   extern int NM,criterion;
   const int r = A.r;
   int best_model=0;// reset
+  int second_best_model = 0; // reset
   bool valid;
 
   for(int m=1;m<=NM;m++) {
@@ -286,25 +289,42 @@ void select_model(ALLDATA &A)
       if (gsl_matrix_get(A.vP[_te_] ,r,m) <  0) valid = false;
       if (gsl_matrix_get(A.vP[_Rex_],r,m) <  0) valid = false;
 
-      if (valid && criterion == _BIC_) {
-	if (best_model == 0)
-	  best_model=m;
-	else 
-	  if (gsl_matrix_get(A.bic,r,m) < gsl_matrix_get(A.bic,r,best_model))
-	    best_model=m;
-	} // BIC
+      if (criterion == _BIC_) 
+      {
+        if (valid) 
+        {
+	  if (best_model == 0) best_model=m;
+	  else if (gsl_matrix_get(A.bic,r,m) < gsl_matrix_get(A.bic,r,best_model)) best_model=m;
+	} 
+        else
+        {
+	  if (second_best_model == 0) second_best_model=m;
+	  else if (gsl_matrix_get(A.bic,r,m) < gsl_matrix_get(A.bic,r,second_best_model)) second_best_model=m;
+        }
+      } // BIC
 
-      if (valid && criterion == _AIC_) {
-	if (best_model == 0) 
-	  best_model=m;
-	else 
-	  if (gsl_matrix_get(A.aic,r,m) < gsl_matrix_get(A.aic,r,best_model))
-	    best_model=m;
-	} // AIC
+      if (criterion == _AIC_) 
+      {
+        if (valid)
+        {
+	  if (best_model == 0) best_model=m;
+	  else if (gsl_matrix_get(A.aic,r,m) < gsl_matrix_get(A.aic,r,best_model)) best_model=m;
+	} 
+        else
+        {
+	  if (second_best_model == 0) second_best_model=m;
+	  else if (gsl_matrix_get(A.aic,r,m) < gsl_matrix_get(A.aic,r,second_best_model)) second_best_model=m;
+        }
+      } // AIC
 
       }// for fitted models only
     } // model
-  A.best[r] = best_model;
+
+  /* if all models are unrealistic, select the best BIC or AIC model */
+  if (best_model != 0)
+    A.best[r] = best_model;
+  else
+    A.best[r] = second_best_model;
 }
 
 int set_is_local (ALLDATA &A, int model)
