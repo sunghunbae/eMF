@@ -28,8 +28,6 @@ using namespace std;
 
 void rjmap (ALLDATA &A, bool header, FILE *xmgr)
 {
-  const extern int D;
-  const extern double gamma_h, gamma_x,r_xh,csa_x;
   double R1,dR1,R2,dR2,NOE,dNOE;
   double g,v,d,c,fd,fc,B0,wh,wx,k1,k2,Jh,Jn,J0,dJh,dJn,dJ0;
   int f;

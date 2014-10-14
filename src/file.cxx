@@ -107,17 +107,12 @@ void parse (const char *line,vector <string> &tokens)
 /* Check ALLDATAFILE */
 void chk_data (const char *file,int &NF,int &NR,int &NK,bool idtk)
 {
-  int maxF=32,maxR=512;
-  int r,k,l,cols;
+  int k,l,cols;
   int res,clu,NC;
   double MHz,R1,dR1,R2,dR2,NOE,dNOE;
   char line[_MAXSTR_],dtk[_MAXSTR_];
   char R1_[_MAXSTR_],dR1_[_MAXSTR_],R2_[_MAXSTR_],dR2_[_MAXSTR_];
   char NOE_[_MAXSTR_],dNOE_[_MAXSTR_];
-  extern map <double,double> min_err1,min_err2,min_err3;
-  extern map <double,double> scl_err1,scl_err2,scl_err3;
-  extern set <int> cluster_set,residue_set;
-  extern set <double> field_set;
   set <double>::iterator f,f0;
   set <int>::iterator c,c0;
 
@@ -236,14 +231,12 @@ void read_data (const char *name,ALLDATA &A,bool idtk)
 {
   int res,clu; 
   double MHz,R1,dR1,R2,dR2,NOE,dNOE,tau,wt;
-  extern map <double,double> min_err1,min_err2,min_err3;
-  extern map <double,double> scl_err1,scl_err2,scl_err3;
   map <double,double>::iterator mp;
   set <int> residues;
   char dtk[_MAXSTR_],line[_MAXSTR_];
   char R1_[_MAXSTR_],dR1_[_MAXSTR_],R2_[_MAXSTR_],dR2_[_MAXSTR_];
   char NOE_[_MAXSTR_],dNOE_[_MAXSTR_];
-  int p,r,f,k,cols;
+  int r,f=0,k,cols;
 
   r=-1;//residue index
 
@@ -363,18 +356,6 @@ void read_data (const char *name,ALLDATA &A,bool idtk)
 
 void read_config (const char *name, ALLDATA &A)
 {
-  extern bool estimate,axial_grid_search,optimize;
-  extern double gamma_h,gamma_x,r_xh,csa_x;
-  extern double critx2,EstNOECut,EstSTDCut;
-  extern double OptS2;
-  extern int MC,MC_trim,MLE_MC;
-  extern int MLE_MC,MLE_cluster;
-  extern int EstCluster;
-  extern int OptCluster,OptMaxIter,OptMethod;
-  extern int criterion;
-  extern string pdbfile,atomx,atomh;
-  extern map <double,double> min_err1,min_err2,min_err3;
-  extern map <double,double> scl_err1,scl_err2,scl_err3;
   map <double,double>::iterator it;
   double MHz,err1,err2,err3;
 

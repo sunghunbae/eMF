@@ -83,8 +83,5 @@ gsl_siman_params_t params = {N_TRIES, ITERS_FIXED_T, STEP_SIZE,
 
 void anneal (ALLDATA &A, double &chisq)
 {
-  extern gsl_rng * rng;
-
   gsl_siman_solve(rng,(void *)&A,E1,S1,M1,P1,NULL,NULL,NULL,sizeof(A),params);
-
 }

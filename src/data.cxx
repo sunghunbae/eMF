@@ -158,7 +158,6 @@ delete [] (A.percentile);
 
 void select_all (ALLDATA &A)
 {
-  const extern int D;
   int r;
 
   if (D == _GLOBAL_AXIAL_ || D == _GLOBAL_ANISOTROPIC_) {
@@ -174,7 +173,6 @@ void select_all (ALLDATA &A)
 
 void select_window (ALLDATA &A,int pos,int size)
 {
-  const extern int D;
   int r;
   int start = ((pos-size) < 0 ? 0: pos-size);
   int end   = ((pos+size) < A.NR ? pos+size: A.NR-1);
@@ -244,8 +242,7 @@ void select_optimizer (ALLDATA &A, int cluster, double s2)
 
 void select_estimator (ALLDATA &A, int cluster, double noe, double r2stdev)
 {
-  double S2[A.NF],S1[A.NF],SS2[A.NF],SS1[A.NF];
-  int r,f,n;
+  int r;
 
   /* 1. select cluster */
   if (cluster != -1) { 
@@ -261,8 +258,6 @@ void select_estimator (ALLDATA &A, int cluster, double noe, double r2stdev)
 
 void setup_attribute (ALLDATA &A) 
 {
-  const extern int D;
-
   A.attr[_S2s_] |= (P_ACTIVE | P_LOCAL);
   A.attr[_S2f_] |= (P_ACTIVE | P_LOCAL);
   A.attr[_te_]  |= (P_ACTIVE | P_LOCAL);

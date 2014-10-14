@@ -36,7 +36,6 @@
 
 void conjgr (ALLDATA &A, double &chisq) 
 {
-  extern bool opt_verb;
   const gsl_multimin_fdfminimizer_type * T;
   gsl_multimin_fdfminimizer * s;
   gsl_vector *x;
@@ -124,7 +123,6 @@ double conjgr_f (const gsl_vector *p,void *par)
 void conjgr_df (const gsl_vector *p,void *par,gsl_vector *g) 
 {
   ALLDATA *A = (ALLDATA *)par;
-  const extern int D;
   int i,j,r,f,nr,np;
   double gradient;
 
@@ -183,7 +181,6 @@ void conjgr_df (const gsl_vector *p,void *par,gsl_vector *g)
 void conjgr_fdf (const gsl_vector *p,void *par,double *chisq,gsl_vector *g) 
 {
   ALLDATA *A = (ALLDATA *)par;
-  const extern int D;
   int i,j,r,f,nr,np;
   double gradient;
 
@@ -252,14 +249,12 @@ void conjgr_fdf (const gsl_vector *p,void *par,double *chisq,gsl_vector *g)
 
 double conjgr_nf (double x, void *par) 
 {
-  const extern int D;
   ALLDATA *A = (ALLDATA *)par;
   A->p[A->fpar] = x;
   return chi2 (*A, A->func);
 }
 
 void conjgr_ndf (const gsl_vector *p,void *par,gsl_vector *g) {
-  const extern int D;
   ALLDATA *A = (ALLDATA *)par;
   double fret,abserr;
   int i,j;

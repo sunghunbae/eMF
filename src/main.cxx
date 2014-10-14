@@ -92,7 +92,6 @@ int main(int argc, char *argv[])
   /* signature */
   printf("  eMF 1.1 by Sung-Hun Bae 2008-2014\n\n");
 
-  extern gsl_rng * rng;
   const gsl_rng_type * T = gsl_rng_ranlux389;
   rng = gsl_rng_alloc (T);
   gsl_rng_set (rng, seed);
@@ -101,28 +100,20 @@ int main(int argc, char *argv[])
   time_t start,finish;
   time(&start);
 
-  int i,j;
+  int i;
 
   char *DATA_FILE = NULL;
   char *CONFIG_FILE = NULL;
   char *XMGR_PREFIX = NULL;
 
-  extern bool estimate,optimize;
-  extern int EstCluster,OptCluster,OptMaxIter;
-  extern string pdbfile;
-  extern int D;
-  extern void (* Jw) (const double w, void *data, double &y, double *dyda);
-  extern int MC;// number of Monte Carlo simulations
-  extern int NM;// number of models
   int NF;// number of magnetic fields
   int NR;// number of residues
   int NK;// number of tau points
-  int r,f,k,m;
+  int r,f,m;
 
   /* commands arguments */
 
   bool do_rjmap = false;
-  bool do_mle = false;
   bool do_test = false;
   bool idtk;
 
@@ -133,7 +124,6 @@ int main(int argc, char *argv[])
       case 'h': print_help(); break;
       case 'v': opt_verb = true; break;
       case 's': do_rjmap = true; break;
-      case 'm': do_mle = true; break;
       case 't': do_test = true; break;
       case 'L': D = _LOCAL_ISOTROPIC_; break;
       case 'I': D = _GLOBAL_ISOTROPIC_; break;
@@ -418,9 +408,8 @@ int main(int argc, char *argv[])
   // if diffusion is set to global
   if (D & _GLOBAL_) {
     //gsl_vector *global = gsl_vector_alloc (NP);
-    extern int MC,OptMaxIter;
     double chisq, chisq_gr;
-    int n,iter=0;
+    int iter=0;
 
     /* 
       estimate rotational diffusion tensor:
@@ -574,7 +563,7 @@ int main(int argc, char *argv[])
 
 	}// optimize
 
-        if (optimize & iter == OptMaxIter) 
+        if (optimize & (iter == OptMaxIter))
         {
 	    printf(_ERROR_ "not converged at max. iteration\n");
 	    exit(1);

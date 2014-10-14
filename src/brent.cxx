@@ -34,7 +34,6 @@ using namespace std;
 void brent (ALLDATA &A, double &chisq)
 {
   /* interval [lower...upper], initial guess */
-  extern bool opt_verb;
   double lower,upper,guess,conv;
   int i,status,iter;
 

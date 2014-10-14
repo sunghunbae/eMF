@@ -35,7 +35,6 @@ using namespace std;
 void ax_grid_search (ALLDATA &A) 
 {
   double x2,bic,aic,x2_,bic_,aic_;
-  extern int NM;
   size_t r,m,n;
   int p = A.grds[_Dr_]+1;
   int q = A.grds[_tc_]+1;
@@ -134,8 +133,6 @@ void ax_grid_search (ALLDATA &A)
 
 void grid_search (ALLDATA &A, int func, double &chisq, bool output)
 {
-  extern size_t grid_index_end; 
-  extern double grid_min_x2, grid_min_par[];
   double unit;
 
   grid_index_end = 0;
@@ -162,8 +159,6 @@ void grid_search (ALLDATA &A, int func, double &chisq, bool output)
 
 void recursive_s (ALLDATA &A, int func, int grid_index)
 {
-  extern size_t grid_index_end;
-  extern double grid_min_x2, grid_min_par[];
 
   if (grid_index == 0)
     for(size_t c=0;c<NP;c++) 

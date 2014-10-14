@@ -64,8 +64,6 @@ void R1R2NOE (void *data, gsl_vector *relax, gsl_matrix *jacob)
  */
 
   ALLDATA *A = (ALLDATA *)data;
-  const extern double gamma_h,gamma_x,r_xh,csa_x;
-  extern void (*Jw) (const double w,void *data,double &y,double *dyd);
   double dy0da[NP],dy1da[NP],dy2da[NP],dy3da[NP],dy4da[NP];
   double wh,wx,d,fd_4,fd_8,c,fc,fc_6,fg;
   double y0,y1,y2,y3,y4;
@@ -182,7 +180,6 @@ void Jw_LSe (const double w,void *data,double &y,double *dyd)
   */
 
   ALLDATA *A = (ALLDATA *)data;
-  const extern int D;
   double fac,p0,p1,p2,wt,tk,t;
   double sum_0,sum_1,sum_2,sum_3,sum_4,sum_w;
   double sum_5,sum_6,sum_7,sum_8,sum_9,sum_A;

@@ -83,8 +83,6 @@ using namespace std;
 
 void anisotropic (ALLDATA &A)
 {
-const extern int D;
-
 /* fully anisotropic diffusion tensor */
 if (D == _GLOBAL_ANISOTROPIC_) {
 	double Dxx = A.p[_Dxx_];
@@ -207,7 +205,6 @@ if (D == _GLOBAL_ANISOTROPIC_) {
 
 int read_pdb (const char* filename,ALLDATA &A)
 {
-  extern string atomh,atomx;
   int c,i,NR=A.NR,res;
   char line[_MAXSTR_];
   string s,name,xyz,resSeq,resName;

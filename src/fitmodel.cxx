@@ -25,9 +25,6 @@ using namespace std;
 
 void fitmodel (const int model, const int MC, ALLDATA &A)
 {
-  extern gsl_rng * rng;
-
-  const extern double critx2;
   int i,j,k,mdata,mfit;
   bool valid, store_is[NP];
   double chisq, chisq_gr,store_p[NP];
@@ -109,7 +106,6 @@ void fitmodel (const int model, const int MC, ALLDATA &A)
     /* memory allocation for simulated data */
     gsl_matrix *mcpar = gsl_matrix_calloc(MC,NP);
     double *  mcx2 = new double [MC];
-    extern int MC_trim;
     double simx2,s,ave,var,ep;
     int n, mc_trial = 0, mc_success = 0;
 
@@ -269,8 +265,6 @@ void fitmodel (const int model, const int MC, ALLDATA &A)
 
 void select_model(ALLDATA &A)
 {
-  extern double critx2;
-  extern int NM,criterion;
   const int r = A.r;
   int best_model=0;// reset
   int second_best_model = 0; // reset

@@ -47,7 +47,6 @@ Michael Andrec, Gaetano T. Montelione, and Ronald M. Levy, JMR 139, 408-421 (199
 
 void marginal_density (size_t calls,ALLDATA &A,double &res,double &err) {
 gsl_monte_function G = { &likelihood, MLE_DIM, &A };
-extern gsl_rng * rng;
 
 double xl[MLE_DIM],xu[MLE_DIM];
 
@@ -159,7 +158,6 @@ return prob;
 /* Evaluate R1,R2,NOE and return chi-square */
 void MLE_chi_R1R2NOE (double *p, void *data, gsl_vector *chi)
 {
-const extern double gamma_h,gamma_x,r_xh,csa_x;
 ALLDATA *A = (ALLDATA *)data;
 double wh,wx,d,fd_4,fd_8,c,fc,fc_6,fg;
 double y0,y1,y2,y3,y4;
@@ -237,7 +235,6 @@ void MLE_Jw (const double w,double *p,void *data, double &y)
 /* w : 1E+9 rad/s */
 /* y = spectral density */
 {
-const extern int D;
 ALLDATA *A = (ALLDATA *)data;
 double tk,wt,t,fac,sum_o,sum_i,sum_w;
 int k;

@@ -164,6 +164,25 @@ typedef struct {
   double *percentile;
   } ALLDATA;
 
+extern double critx2;
+extern double gamma_h, gamma_x,r_xh,csa_x;
+extern double grid_min_x2, grid_min_par[];
+extern double EstNOECut,EstSTDCut;
+extern double OptS2;
+extern int D,MC,MC_trim,MLE_MC,MLE_cluster,NM,criterion;
+extern int EstCluster,OptCluster,OptMaxIter,OptMethod;
+extern bool opt_verb,estimate,optimize;
+extern bool axial_grid_search;
+extern size_t grid_index_end;
+extern gsl_rng * rng;
+extern string pdbfile,atomh,atomx;
+extern map <double,double> min_err1,min_err2,min_err3;
+extern map <double,double> scl_err1,scl_err2,scl_err3;
+extern set <int> cluster_set,residue_set;
+extern set <double> field_set;
+
+extern void (* Jw) (const double w,void *data,double &y,double *dyda);
+
 /* func.c */
 void  R1R2NOE (void *data,gsl_vector *,gsl_matrix *);
 void  Jw_LSe  (const double,void *,double &,double *);

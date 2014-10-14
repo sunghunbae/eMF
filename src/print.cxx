@@ -147,9 +147,6 @@ void show_parameter (ALLDATA &A)
 
 void show_models (ALLDATA &A, char *XMGR_PREFIX)
 {
-  extern void (* Jw) (const double w,void *data,double &y,double *dyda);
-  const extern double critx2;
-  const extern int D,MC,NM;
   const int r=A.r, b=A.best[r];
   double MHz,unit;
   int i,f,m;

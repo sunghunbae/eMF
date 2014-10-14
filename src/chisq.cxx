@@ -90,12 +90,9 @@
 
 #include "emf.h"
 
-extern void (*Jw) (const double w,void *data,double &y,double *dyd);
-
 int chi_R1R2NOE_f (const gsl_vector *p, void *par, gsl_vector *c)
 {
   ALLDATA *A = (ALLDATA *)par;
-  const extern int D;
   double R1,R2,NOE,fv=0.0;
   int i,j,f;
 
@@ -161,7 +158,6 @@ int chi_R1R2NOE_df (const gsl_vector *p, void *par, gsl_matrix *J)
 int chi_R1R2NOE_fdf (const gsl_vector *p,void *par,gsl_vector *c,gsl_matrix *J)
 {
   ALLDATA *A = (ALLDATA *)par;
-  const extern int D;
   double R1,R2,NOE,dR1j,dR2j,dNOEj,fv=0.0;
   int i,j,f;
 
@@ -394,7 +390,6 @@ int chi_g21_fdf (const gsl_vector *p,void *par,gsl_vector *c,gsl_matrix *J)
 int chi_gfm_f (const gsl_vector *p,void *par,gsl_vector *c) 
 {
   ALLDATA *A = (ALLDATA *)par;
-  const extern int NM;
   gsl_vector_view chi;
   int r,i,j,m;
 
@@ -415,7 +410,6 @@ int chi_gfm_f (const gsl_vector *p,void *par,gsl_vector *c)
 
 double chi2 (ALLDATA &A, int func)
 {
-  const extern int NM;
   double chisq,R1,R2,dR1,dR2,sig2,fR1,fR2,dy;
   int i,j,k,f,np;
 
@@ -436,7 +430,6 @@ double chi2 (ALLDATA &A, int func)
   if (func == GX2_R2_OVER_R1 ) {
     /* for estimation of diffusion tensor */
     /* global chi-square of R2/R1 */
-    const extern int D;
     gsl_vector * relax = gsl_vector_calloc (A.NF*3);
     double fv;
     for (A.r=0;A.r<A.NR;A.r++) {
@@ -464,8 +457,6 @@ double chi2 (ALLDATA &A, int func)
 
   if (func == GX2_R2_OVER_R1_SIMPLE ) {
     /* for estimation of diffusion tensor */
-    const extern int D;
-    const extern double gamma_h,gamma_x,r_xh,csa_x;
 
     gsl_vector * relax = gsl_vector_calloc (A.NF*3);
     const double c0 = gamma_x/(5.0*gamma_h);
@@ -784,7 +775,6 @@ int chi_w_fdf (const gsl_vector *p, void *par, gsl_vector *c,gsl_matrix *J)
 double boundary_penalty (void *par)
 {
   ALLDATA *A = (ALLDATA *)par;
-  const extern int D;
   double fv=0.0;
   int i;
   /* impose square-well restrain on each chi-square */
