@@ -1,5 +1,6 @@
-.gitignore
+githelp
 build/
+build/*
 CMakeCache.txt
 CMakeFiles
 Makefile
