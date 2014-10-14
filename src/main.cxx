@@ -529,7 +529,7 @@ int main(int argc, char *argv[])
 	only internal dynamic variables are changed 
       */
 	
-      while (optimize && iter < OptMaxIter) {
+      while (optimize && (iter < OptMaxIter)) {
 
 	print_iteration(iter,A);
 
