@@ -1,12 +1,16 @@
-CMAKE_MINIMUM_REQUIRED (VERSION 2.6)
+CMAKE_MINIMUM_REQUIRED (VERSION 3.2)
+
+# we will use FindGSL which is new in cmake version 3.2
+# https://cmake.org/cmake/help/latest/module/FindGSL.html
 
 PROJECT(eMF)
+
+# chang the installation location (default: ~/bin)
+SET(CMAKE_INSTALL_PREFIX ~/bin )
 
 SET(USE_STATIC_LIBS off )
 SET(CMAKE_VERBOSE_MAKEFILE off)
 SET(CMAKE_CXX_FLAGS "-O3 -Wparentheses")
-SET(CMAKE_INSTALL_PREFIX ~/bin )
-SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 IF   ( CMAKE_SIZEOF_VOID_P EQUAL 8 )
   LINK_DIRECTORIES ( /usr/lib /lib )
