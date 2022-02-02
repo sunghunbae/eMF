@@ -16,6 +16,11 @@ an ensemble of vastly different overall structures due to the disordered N-termi
 eMF was born out of an attempt to resolve this problem by applying the 'distributed' correlation time.
 It was written to be easy and straightforward to use and to put together recent model free protocols.
 
+### Updated
+
+- Compatible with GSL 2.x and GSL 1.x
+- Using CMake default FindGSL (requires cmake >= 3.2)
+
 ### Features
 
 - separate config and data files
