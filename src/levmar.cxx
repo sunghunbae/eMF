@@ -33,11 +33,18 @@
 */
 
 #include "emf.h"
+#include <gsl/gsl_version.h>
+#if GSL_MAJOR_VERSION > 1
+#include <gsl/gsl_multifit_nlinear.h>
+#else
 #include <gsl/gsl_multifit_nlin.h>
+#endif
 #include <gsl/gsl_blas.h>
-#define LEVMAR_STOP_GRAD    1e-12
-#define LEVMAR_STOP_DELTA   1e-12
-#define LEVMAR_STOP_ITER    1000000
+
+#define LEVMAR_GTOL    1e-12
+#define LEVMAR_XTOL    1e-12
+#define LEVMAR_FTOL    1e-9
+#define LEVMAR_MAXITER 1000000
 
 using namespace std;
 
@@ -51,6 +58,207 @@ void static print_gsl_matrix (gsl_matrix *m)
 }
 
 
+#if GSL_MAJOR_VERSION > 1
+void callback(const size_t iter, void *params, const gsl_multifit_nlinear_workspace *w)
+{
+  gsl_vector * x = gsl_multifit_nlinear_position(w);
+  /* print out current location */
+  printf("%f %f\n",
+         gsl_vector_get(x, 0),
+         gsl_vector_get(x, 1));
+}
+
+void levmar (ALLDATA &A,double &chisq, gsl_vector *e)
+{
+  int i,j,nx,np,info;
+
+  gsl_vector_set_zero (e);
+
+  nx = 3*A.NF;
+  for (np=0,i=0;i<NP;i++)
+    if (A.is[i]) np++;
+
+  gsl_vector * p = gsl_vector_calloc(np);
+  gsl_matrix * covar = gsl_matrix_alloc (np,np); 
+  gsl_matrix * J;
+  const gsl_multifit_nlinear_type * T = gsl_multifit_nlinear_trust;
+  gsl_multifit_nlinear_parameters fdf_params = gsl_multifit_nlinear_default_parameters();
+  gsl_multifit_nlinear_workspace * w;
+  gsl_multifit_nlinear_fdf fdf;
+
+  for (i=0,j=0;i<NP;i++) {
+    if (A.is[i]) {
+      //printf("p %d %f\n",j,A.p[i]);
+      gsl_vector_set(p,j++,A.p[i]);
+    }
+  }
+
+  fdf.f   = &chi_R1R2NOE_f;
+  fdf.df  = &chi_R1R2NOE_df;
+  fdf.fvv = NULL; /* not using geodesic acceleration */
+  fdf.n   = nx;
+  fdf.p   = np;
+  fdf.params = &A;
+
+  w = gsl_multifit_nlinear_alloc (T, &fdf_params, nx, np);
+
+  /* initialize solver with starting point */
+  gsl_multifit_nlinear_init (p, &fdf, w);
+
+  /* iterate until convergence: maxiter, xtol, gtol, ftol, callback, callback_params, &info, w */
+  gsl_multifit_nlinear_driver(LEVMAR_MAXITER, LEVMAR_XTOL, LEVMAR_GTOL, LEVMAR_FTOL, NULL, NULL, &info, w);
+
+  /* compute covariance of best fit parameters */
+  J = gsl_multifit_nlinear_jac(w);
+  gsl_multifit_nlinear_covar (J, 0.0, covar);
+
+  /* compute final cost */
+  gsl_vector * f = gsl_multifit_nlinear_residual(w);
+  gsl_blas_ddot(f, f, &chisq);
+
+  for (j=0,i=0;i<NP;i++) {
+    if (A.is[i]) {
+      gsl_vector_set (e, i, sqrt(gsl_matrix_get(covar,j,j)));
+      j++;
+      }
+  }
+
+  /* free memory */
+  gsl_vector_free (p);
+  gsl_matrix_free (covar);
+  gsl_multifit_nlinear_free(w);
+
+}
+
+void levmar (ALLDATA &A, double &chisq)
+{
+  int i,j,nx,np,nr,info;
+
+  for (nr=0,i=0;i<A.NR;i++)
+    if (A.flag[i]) nr++;
+
+  for (np=0,i=0;i<NP;i++) 
+    if (A.is[i]) np++;
+
+
+  gsl_vector * p = gsl_vector_calloc(np);
+  const gsl_multifit_nlinear_type * T = gsl_multifit_nlinear_trust;
+  gsl_multifit_nlinear_parameters fdf_params = gsl_multifit_nlinear_default_parameters();
+  gsl_multifit_nlinear_workspace * w;
+  gsl_multifit_nlinear_fdf fdf;
+
+  for (i=0,j=0;i<NP;i++)
+    if (A.is[i]) gsl_vector_set(p,j++,A.p[i]);
+
+  if (A.func == GX2_R1R2NOE_BM) {
+    nx = 3*A.NF*nr;
+    fdf.f   = &chi_gbm_f;
+    fdf.df  = &chi_gbm_df;
+    fdf.fvv = NULL;
+    fdf.n   = nx;
+    fdf.p   = np;
+    fdf.params = &A;
+    }
+
+  if (A.func == GX2_R2_OVER_R1) {
+    nx = A.NF*nr;
+    fdf.f   = &chi_g21_f;
+    fdf.df  = &chi_g21_df;
+    fdf.fvv = NULL;
+    fdf.n   = nx;
+    fdf.p   = np;
+    fdf.params = &A;
+    }
+
+  w = gsl_multifit_nlinear_alloc (T, &fdf_params, nx, np);
+
+  /* initialize solver with starting point */
+  gsl_multifit_nlinear_init (p, &fdf, w);
+
+  /* iterate until convergence: maxiter, xtol, gtol, ftol, callback, callback_params, &info, w */
+  gsl_multifit_nlinear_driver(LEVMAR_MAXITER, LEVMAR_XTOL, LEVMAR_GTOL, LEVMAR_FTOL, NULL, NULL, &info, w);
+
+  /* compute final cost */
+  gsl_vector * f = gsl_multifit_nlinear_residual(w);
+  gsl_blas_ddot(f, f, &chisq);
+
+  /* free memory */
+  gsl_vector_free (p);
+  gsl_multifit_nlinear_free(w);
+}
+
+void levmarw (ALLDATA &A, double &chisq)
+{
+  int i,j,r,nx,nr,np,nl,ng,info;
+
+  /* count global parameters */
+  for (ng=0,i=0;i<NP;i++) {
+    if ((A.attr[i] & P_ACTIVE) && ((A.attr[i] & P_LOCAL)==0) &&
+      ((A.attr[i] & P_FIXED) == 0)) ng++;
+    }
+
+  /* count data points and local parameters */
+  nr = nl = 0;
+  for (r=0;r<A.NR;r++) {
+    if (A.flag[r]) {
+      nr++;
+      nl += set_is_local (A,A.best[r]);
+      }
+    }
+
+  np = ng +nl;
+
+  gsl_vector * p = gsl_vector_calloc(np);
+  const gsl_multifit_nlinear_type * T = gsl_multifit_nlinear_trust;
+  gsl_multifit_nlinear_parameters fdf_params = gsl_multifit_nlinear_default_parameters();
+  gsl_multifit_nlinear_workspace * w;
+  gsl_multifit_nlinear_fdf fdf;
+
+  /* setup initial parameter vector :global */
+  j=0;
+  for (i=0;i<NP;i++) {
+    if ((A.attr[i] & P_ACTIVE) && ((A.attr[i] & P_LOCAL)==0) && 
+      ((A.attr[i] & P_FIXED) == 0)) 
+      gsl_vector_set(p,j++,A.p[i]);
+    }
+
+  /* setup initial parameter vector :local */
+  for (r=0;r<A.NR;r++) {
+    if (A.flag[r]) {
+      set_is_local (A,A.best[r]);
+      for (i=0;i<NP;i++)
+	if (A.is[i]) 
+	  gsl_vector_set(p,j++,gsl_matrix_get(A.vP[i],r,A.best[r]));
+      }// flag
+    }// r
+
+  if (A.func == GX2_R1R2NOE_BM) {
+    nx = 3*A.NF*nr;
+    fdf.f   = &chi_w_f;
+    fdf.df  = &chi_w_df;
+    fdf.fvv = NULL;
+    fdf.n   = nx;
+    fdf.p   = np;
+    fdf.params = &A;
+    w = gsl_multifit_nlinear_alloc (T, &fdf_params, nx, np);
+    }
+
+  /* initialize solver with starting point */
+  gsl_multifit_nlinear_init (p, &fdf, w);
+
+  /* iterate until convergence: maxiter, xtol, gtol, ftol, callback, callback_params, &info, w */
+  gsl_multifit_nlinear_driver(LEVMAR_MAXITER, LEVMAR_XTOL, LEVMAR_GTOL, LEVMAR_FTOL, NULL, NULL, &info, w);
+
+  /* compute final cost */
+  gsl_vector * f = gsl_multifit_nlinear_residual(w);
+  gsl_blas_ddot(f, f, &chisq);
+
+  /* free memory */
+  gsl_vector_free (p);
+  gsl_multifit_nlinear_free(w);
+
+}
+#else
 void levmar (ALLDATA &A,double &chisq, gsl_vector *e)
 {
   int i,j,np,status;
@@ -85,8 +293,8 @@ void levmar (ALLDATA &A,double &chisq, gsl_vector *e)
     status = gsl_multifit_fdfsolver_iterate (s);
     if (status) break;
     status = gsl_multifit_test_delta (s->dx, s->x, 
-      LEVMAR_STOP_GRAD, LEVMAR_STOP_DELTA);
-    } while (status == GSL_CONTINUE && iter < LEVMAR_STOP_ITER);
+      LEVMAR_GTOL, LEVMAR_XTOL);
+    } while (status == GSL_CONTINUE && iter < LEVMAR_MAXITER);
 	
   chisq = SQR(gsl_blas_dnrm2(s->f));
 
@@ -153,8 +361,8 @@ void levmar (ALLDATA &A, double &chisq)
     status = gsl_multifit_fdfsolver_iterate (s);
     if (status) break;
     status = gsl_multifit_test_delta (s->dx, s->x,
-      LEVMAR_STOP_GRAD,LEVMAR_STOP_DELTA);
-    } while (status == GSL_CONTINUE && iter < LEVMAR_STOP_ITER);
+      LEVMAR_GTOL,LEVMAR_XTOL);
+    } while (status == GSL_CONTINUE && iter < LEVMAR_MAXITER);
 
   chisq = SQR(gsl_blas_dnrm2(s->f));
 
@@ -222,11 +430,12 @@ void levmarw (ALLDATA &A, double &chisq)
     status = gsl_multifit_fdfsolver_iterate (s);
     if (status) break;
     status = gsl_multifit_test_delta (s->dx, s->x,
-      LEVMAR_STOP_GRAD,LEVMAR_STOP_DELTA);
-    } while (status == GSL_CONTINUE && iter < LEVMAR_STOP_ITER);
+      LEVMAR_GTOL,LEVMAR_XTOL);
+    } while (status == GSL_CONTINUE && iter < LEVMAR_MAXITER);
 
   chisq = SQR(gsl_blas_dnrm2(s->f));
 
   gsl_multifit_fdfsolver_free(s);
   gsl_vector_free (p);
 }
+#endif

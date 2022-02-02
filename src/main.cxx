@@ -90,7 +90,7 @@ bool opt_verb = false;
 int main(int argc, char *argv[])
 {
   /* signature */
-  printf("  eMF 1.1 by Sung-Hun Bae 2008-2014\n\n");
+  printf("  eMF 1.2 by Sung-Hun Bae 2008-2022\n\n");
 
   const gsl_rng_type * T = gsl_rng_ranlux389;
   rng = gsl_rng_alloc (T);
