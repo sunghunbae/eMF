@@ -580,6 +580,11 @@ void read_config (const char *name, ALLDATA &A)
   A.step[_theta_] *= M_PI/180.0;
   A.conv[_theta_] *= M_PI/180.0;
   A.p[_theta_]    *= M_PI/180.0;
+  A.lb[_psi_]     *= M_PI/180.0;
+  A.ub[_psi_]     *= M_PI/180.0;
+  A.step[_psi_]   *= M_PI/180.0;
+  A.conv[_psi_]   *= M_PI/180.0;
+  A.p[_psi_]      *= M_PI/180.0;
   fclose(config_file);
 }
 
