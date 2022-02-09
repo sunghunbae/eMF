@@ -47,57 +47,57 @@
 
 using namespace std;
 
-#define _INFO_		"# "
-#define _WARNING_	"WARNING "
-#define _ERROR_		">>>>> "
+#define _INFO_		    "# "
+#define _WARNING_	    "WARNING "
+#define _ERROR_		    ">>>>> "
 #define _ITEM_WIDTH_	30
-#define _INDENT_	5
-#define _MAXSTR_	256
+#define _INDENT_	    5
+#define _MAXSTR_	    256
 
 #define mu0_h_8pi2		1.0545887 // unit E-41
 
 /* rotational diffusion tensor type */
 
-#define _NONE_			0
-#define	_GLOBAL_		1	
-#define	_LOCAL_			2
-#define _ISOTROPIC_		4
-#define _AXIAL_			8
-#define _ANISOTROPIC_		16
-#define _DISTRIBUTION_		32
-#define _BIMODAL_		64
-#define	_COLE_COLE_		128
-#define	_LORENTZIAN_		256
-#define _WINDOW_		512
-#define _GLOBAL_ISOTROPIC_	5
-#define _GLOBAL_AXIAL_		9
-#define _GLOBAL_ANISOTROPIC_	17
-#define _GLOBAL_DISTRIBUTION_	33
-#define _GLOBAL_BIMODAL_	65
-#define _LOCAL_ISOTROPIC_	6
-#define _LOCAL_DISTRIBUTION_	34
-#define _LOCAL_BIMODAL_		66
-#define _LOCAL_COLE_COLE_	130
-#define _LOCAL_LORENTZIAN_	258
-#define _WINDOW_ISOTROPIC_	516
+#define _NONE_                  0
+#define	_GLOBAL_                1	    // 0 0 0 0 0 0 0 0 0 1
+#define	_LOCAL_                 2       // 0 0 0 0 0 0 0 0 1 0
+#define _ISOTROPIC_             4       // 0 0 0 0 0 0 0 1 0 0
+#define _AXIAL_                 8       // 0 0 0 0 0 0 1 0 0 0
+#define _ANISOTROPIC_           16      // 0 0 0 0 0 1 0 0 0 0
+#define _DISTRIBUTION_          32      // 0 0 0 0 1 0 0 0 0 0
+#define _BIMODAL_               64      // 0 0 0 1 0 0 0 0 0 0
+#define	_COLE_COLE_             128     // 0 0 1 0 0 0 0 0 0 0
+#define	_LORENTZIAN_            256     // 0 1 0 0 0 0 0 0 0 0
+#define _WINDOW_                512     // 1 0 0 0 0 0 0 0 0 0
+#define _GLOBAL_ISOTROPIC_      5       // 0 0 0 0 0 0 0 1 0 1
+#define _GLOBAL_AXIAL_          9       // 0 0 0 0 0 0 1 0 0 1
+#define _GLOBAL_ANISOTROPIC_    17      // 0 0 0 0 0 1 0 0 0 1
+#define _GLOBAL_DISTRIBUTION_   33      // 0 0 0 0 1 0 0 0 0 1
+#define _GLOBAL_BIMODAL_        65      // 0 0 0 1 0 0 0 0 0 1
+#define _LOCAL_ISOTROPIC_       6       // 0 0 0 0 0 0 0 1 1 0
+#define _LOCAL_DISTRIBUTION_    34      // 0 0 0 0 1 0 0 0 1 0
+#define _LOCAL_BIMODAL_         66      // 0 0 0 1 0 0 0 0 1 0
+#define _LOCAL_COLE_COLE_       130     // 0 0 1 0 0 0 0 0 1 0
+#define _LOCAL_LORENTZIAN_      258     // 0 1 0 0 0 0 0 0 1 0
+#define _WINDOW_ISOTROPIC_      516     // 1 0 0 0 0 0 0 1 0 0
 
 /* Parameters */
-#define _S2f_	  0
-#define _S2s_	  1
-#define _te_	  2
-#define _Rex_	  3
-#define _tc_	  4
-#define _Dr_	  5 
-#define _scf_	  6
-#define _Dxx_	  7
-#define _Dyy_	  8
-#define _Dzz_	  9
-#define _phi_	  10
-#define _theta_	  11
-#define _psi_	  12
-#define _tb_	  13
-#define _c_	  14
-#define NP	  15
+#define _S2f_       0
+#define _S2s_       1
+#define _te_        2
+#define _Rex_       3
+#define _tc_        4
+#define _Dr_        5 
+#define _scf_       6
+#define _Dxx_       7
+#define _Dyy_       8
+#define _Dzz_       9
+#define _phi_       10
+#define _theta_     11
+#define _psi_       12
+#define _tb_        13
+#define _c_         14
+#define NP          15
 
 /* parameter status (bitwise flag) */
 #define P_RESET	  0
@@ -107,62 +107,63 @@ using namespace std;
 #define P_ROTDIF  8	/* unset= internal dynamics */
 
 /* target function type */
-#define LX2_R1R2NOE	1
-#define GX2_R2_OVER_R1 	2
-#define GX2_R2_OVER_R1_SIMPLE 	3
-#define GX2_R1R2NOE_FM 	4
-#define GX2_R1R2NOE_BM 	5
-#define GX2_LIKELIHOOD	6
+#define LX2_R1R2NOE             1
+#define GX2_R2_OVER_R1          2
+#define GX2_R2_OVER_R1_SIMPLE   3
+#define GX2_R1R2NOE_FM          4
+#define GX2_R1R2NOE_BM          5
+#define GX2_LIKELIHOOD          6
 
 /* global minimization method */
-#define M_AUTO	  0	
-#define M_BRENT	  1
-#define M_SIMPLEX 2
-#define M_POWELL  3
-#define M_CONJGR  4
-#define M_LEVMAR  5
-#define M_LEVMARW 6
-#define M_ANNEAL  7
+#define M_AUTO      0	
+#define M_BRENT     1
+#define M_SIMPLEX   2
+#define M_POWELL    3
+#define M_CONJGR    4
+#define M_LEVMAR    5
+#define M_LEVMARW   6
+#define M_ANNEAL    7
 
 /* model selection criterion */
-#define _BIC_	1
-#define _AIC_	2
-#define _STU_	3
+#define _BIC_   1
+#define _AIC_   2
+#define _STU_   3
 
 typedef struct {
-  /* info */
-  int MA,NF,NR,NK;
-  bool idtk,*flag; // NR
-  int *num,*clst,*best; // NR
+    /* info */
+    int MA,NF,NR,NK;
+    bool idtk,*flag; // NR
+    int *num,*clst,*best; // NR
 
-  /* function arguments (internal use) */
-  int func,r,fpar;
-  double *u,*v; // MA
+    /* function arguments (internal use) */
+    int func,r,fpar;
+    double *u,*v; // MA
 
-  /* experimental data */
-  gsl_matrix *X,*Y,*SIG;// NR x (NF*3)
-  gsl_matrix *TAU,*WT;// NR x NK
+    /* experimental data */
+    gsl_matrix *X,*Y,*SIG;// NR x (NF*3)
+    gsl_matrix *TAU,*WT;// NR x NK
 
-  /* parameters */
-  double *p,*lb,*ub,*lk,*uk,*step,*conv; // MA
-  int *grds;
-  char *attr;
-  bool *is; // MA
-  char pid[NP][80];
-  char fid[NP][80];
+    /* parameters */
+    double *p,*lb,*ub,*lk,*uk,*step,*conv; // MA
+    int *grds;
+    char *attr;
+    bool *is; // MA
+    char pid[NP][80];
+    char fid[NP][80];
 
-  /* diffusion */
-  bool *ivec;
-  double *t;// max.5
-  double *x,*y,*z,*alpha; // NR
+    /* diffusion */
+    bool *ivec;
+    double *t;// max.5
+    double *x,*y,*z,*alpha; // NR
+    double *xi, *yi, *zi;
 
-  /* model info. NR x (NM+1) */
-  gsl_matrix *x2,*dof,*aic,*bic;
-  gsl_matrix *vP[NP],*dP[NP],*aP[NP];
+    /* model info. NR x (NM+1) */
+    gsl_matrix *x2,*dof,*aic,*bic;
+    gsl_matrix *vP[NP],*dP[NP],*aP[NP];
 
-  /* Monte Carlo simulation (internal use) */
-  double *percentile;
-  } ALLDATA;
+    /* Monte Carlo simulation (internal use) */
+    double *percentile;
+} ALLDATA;
 
 extern double critx2;
 extern double gamma_h, gamma_x,r_xh,csa_x;
@@ -184,10 +185,13 @@ extern set <double> field_set;
 extern void (* Jw) (const double w,void *data,double &y,double *dyda);
 
 /* func.c */
-void  R1R2NOE (void *data,gsl_vector *,gsl_matrix *);
-void  Jw_LSe  (const double,void *,double &,double *);
-void  Jw_CC   (const double,void *,double &,double *);
-void  Jw_Lz   (const double,void *,double &,double *);
+void R1R2NOE (void *data,gsl_vector *,gsl_matrix *);
+void Jw_LSe  (const double,void *,double &,double *);
+void Jw_CC   (const double,void *,double &,double *);
+void Jw_Lz   (const double,void *,double &,double *);
+void test_isotropic ();
+void test_anisotropic ();
+void test_axial ();
 
 /* chisq.c */
 int chi_R1R2NOE_f (const gsl_vector *,void *,gsl_vector *);
@@ -298,4 +302,4 @@ inline double SQR (double a) {return a*a;}
 inline double deg2rad (double deg) { return deg * (M_PI / 180.0); }
 inline double rad2deg (double rad) { return rad * (180.0 / M_PI); }
 
-#endif /* _EMF_H_ */
+#endif

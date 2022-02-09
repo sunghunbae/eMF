@@ -227,8 +227,8 @@ void levmarw (ALLDATA &A, double &chisq)
     if (A.flag[r]) {
       set_is_local (A,A.best[r]);
       for (i=0;i<NP;i++)
-	if (A.is[i]) 
-	  gsl_vector_set(p,j++,gsl_matrix_get(A.vP[i],r,A.best[r]));
+    if (A.is[i]) 
+      gsl_vector_set(p,j++,gsl_matrix_get(A.vP[i],r,A.best[r]));
       }// flag
     }// r
 
@@ -261,60 +261,73 @@ void levmarw (ALLDATA &A, double &chisq)
 #else
 void levmar (ALLDATA &A,double &chisq, gsl_vector *e)
 {
-  int i,j,np,status;
-  unsigned int iter = 0;
-  gsl_vector_set_zero (e);
+    int i,j,np,status;
+    unsigned int iter = 0;
+    gsl_vector_set_zero (e);
 
-  for (np=0,i=0;i<NP;i++)
-    if (A.is[i]) np++;
-
-  gsl_vector * p = gsl_vector_calloc(np); /* parameters */
-  gsl_matrix * covar = gsl_matrix_alloc (np,np); 
-  gsl_multifit_function_fdf f;
-  gsl_multifit_fdfsolver *s;
-  const gsl_multifit_fdfsolver_type *T;
-
-  for (i=0,j=0;i<NP;i++)
-    if (A.is[i]) gsl_vector_set(p,j++,A.p[i]);
-
-  f.f   = &chi_R1R2NOE_f;
-  f.df  = &chi_R1R2NOE_df;
-  f.fdf = &chi_R1R2NOE_fdf;
-  f.n   = A.NF*3;
-  f.p   = np;
-  f.params = &A;
-
-  T = gsl_multifit_fdfsolver_lmsder;
-  s = gsl_multifit_fdfsolver_alloc (T, A.NF*3, np);
-  gsl_multifit_fdfsolver_set (s, &f, p);
-
-  do {
-    iter++;
-    status = gsl_multifit_fdfsolver_iterate (s);
-    if (status) break;
-    status = gsl_multifit_test_delta (s->dx, s->x, 
-      LEVMAR_GTOL, LEVMAR_XTOL);
-    } while (status == GSL_CONTINUE && iter < LEVMAR_MAXITER);
-	
-  chisq = SQR(gsl_blas_dnrm2(s->f));
-
-  /* fitting error from covariance matrix */
-  gsl_multifit_covar (s->J, 0.0, covar);
-
-  /* debug */
-  //printf("Jacobian:\n"); print_gsl_matrix(s->J);
-  //printf("Covar:\n"); print_gsl_matrix(covar);
-
-  for (j=0,i=0;i<NP;i++)
-    if (A.is[i]) {
-      gsl_vector_set (e, i, sqrt(gsl_matrix_get(covar,j,j)));
-      j++;
+    for (np=0,i=0;i<NP;i++)
+    {
+      if (A.is[i]) 
+      {
+        np++;
       }
-  gsl_matrix_free (covar);
+    }
 
-  gsl_vector_free (p);
-  gsl_multifit_fdfsolver_free(s);
+    gsl_vector * p = gsl_vector_calloc(np); /* parameters */
+    gsl_matrix * covar = gsl_matrix_alloc (np,np); 
+    gsl_multifit_function_fdf f;
+    gsl_multifit_fdfsolver *s;
+    const gsl_multifit_fdfsolver_type *T;
+
+    for (i=0,j=0;i<NP;i++)
+    {
+      if (A.is[i]) 
+      {
+        gsl_vector_set(p,j++,A.p[i]);
+      }
+    }
+
+    f.f   = &chi_R1R2NOE_f;
+    f.df  = &chi_R1R2NOE_df;
+    f.fdf = &chi_R1R2NOE_fdf;
+    f.n   = A.NF*3;
+    f.p   = np;
+    f.params = &A;
+
+    T = gsl_multifit_fdfsolver_lmsder;
+    s = gsl_multifit_fdfsolver_alloc (T, A.NF*3, np);
+    gsl_multifit_fdfsolver_set (s, &f, p);
+
+    do 
+    {
+      iter++;
+      status = gsl_multifit_fdfsolver_iterate (s);
+      if (status) break;
+      status = gsl_multifit_test_delta (s->dx, s->x, LEVMAR_GTOL, LEVMAR_XTOL);
+    } while (status == GSL_CONTINUE && iter < LEVMAR_MAXITER);
+    
+    chisq = SQR(gsl_blas_dnrm2(s->f));
+
+    /* fitting error from covariance matrix */
+    gsl_multifit_covar (s->J, 0.0, covar);
+
+    /* debug */
+    //printf("Jacobian:\n"); print_gsl_matrix(s->J);
+    //printf("Covar:\n"); print_gsl_matrix(covar);
+
+    for (j=0,i=0;i<NP;i++)
+    {
+      if (A.is[i]) 
+      {
+        gsl_vector_set (e, i, sqrt(gsl_matrix_get(covar,j,j)));
+        j++;
+      }
+    }
+    gsl_matrix_free (covar);
+    gsl_vector_free (p);
+    gsl_multifit_fdfsolver_free(s);
 }
+
 
 void levmar (ALLDATA &A, double &chisq)
 {
@@ -408,8 +421,8 @@ void levmarw (ALLDATA &A, double &chisq)
     if (A.flag[r]) {
       set_is_local (A,A.best[r]);
       for (i=0;i<NP;i++)
-	if (A.is[i]) 
-	  gsl_vector_set(p,j++,gsl_matrix_get(A.vP[i],r,A.best[r]));
+    if (A.is[i]) 
+      gsl_vector_set(p,j++,gsl_matrix_get(A.vP[i],r,A.best[r]));
       }// flag
     }// r
 
