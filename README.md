@@ -119,12 +119,42 @@ par S2s   -lb 0.0 -ub   1.0 -gr 20
 par te    -lb 0.0 -ub   3.0 -gr 30
 par Rex   -lb 0.0 -ub  10.0 -gr 10
 
-# diffusion = axially symmetric
+# diffusion tensor: isotropic (-I)
+# par tc    -lb 7.5 -ub   9.5 -gr 20 -cv 1e-3
 
-par tc    -lb 7.5 -ub   9.5 -gr 20 -cv 1e-3   #-fx  8.630
-par Dr    -lb 1.0 -ub   1.3 -gr 10 -cv 0.01   #-fx  1.195
-par phi   -lb 0   -ub 360   -gr 24 -cv 0.1     -fx -2.385
-par theta -lb 0   -ub 180   -gr 12 -cv 0.1     -fx  0.000
+# diffusion tensor: axially symmetric (-A) 
+# There are two possible solutions: protate and oblate.
+#     prolate (z-axis is the largest,  Dr >1)
+#     oblate  (z-axis is the smallest, Dr <1)
+#
+#     Dpar = Dzz       (parallel)
+#     Dper = Dxx = Dyy (perpendicular)
+#     Dr   = Dpar/Dper = Dzz/Dxx or Dzz/Dyy
+#
+#     Dper = 1.0 / (2 * tc * (2.0 + Dr ))
+#     At the isotropic diffusion limit (Dr=1), Dper = Dpar = 1/(6*(tc))
+#
+# valid range of diffusion tensor angles
+# phi   : 0-360 degree
+# theta : 0-180 degree
+    
+par tc      -lb 7.5 -ub   9.5 -gr 20 -cv 1e-3
+par Dr      -lb 1.0 -ub   1.3 -gr 10 -cv 0.01
+par phi     -lb 0   -ub 360   -gr 24 -cv 0.1     -fx -2.385
+par theta   -lb 0   -ub 180   -gr 12 -cv 0.1     -fx  0.000
+
+# diffusion tensor: anisotropic (-N)
+# valid range of diffusion tensor angles
+# phi   : 0-360 degree
+# theta : 0-180 degree
+# psi   : 0-360 degree
+#
+# par Dxx   -lb 0.008 -ub 0.03  -gr 20  -cv 1e-3 
+# par Dyy   -lb 0.008 -ub 0.03  -gr 20  -cv 1e-3
+# par Dzz   -lb 0.008 -ub 0.03  -gr 20  -cv 1e-3
+# par phi   -lb 0.0   -ub 360   -gr 24  -cv 1e-3  -in 173.128
+# par theta -lb 0.0   -ub 180   -gr 12  -cv 1e-3  -in 75.123
+# par psi   -lb 0.0   -ub 360   -gr 24  -cv 1e-3  -in 82.351
 
 # PDB COORDINATES (NECESSARY FOR NON-ISOTROPIC MODELS)
 # coor [file name] [-h atom name] [-x atom name]
@@ -136,7 +166,7 @@ coor 1rx7.rot.pdb -h H -x N
 # -min # # #   : set minimum proportioanl errors for R1,R2,NOE 
 # -scale # # # : scale errors for R1,R2,NOE           
 
-#error -field * -min 0.05 0.05 0.05
+# error -field * -min 0.05 0.05 0.05
 # i.e if given errors are less than 5% of measured values,
 #     set errors as 5% of measured values for all fields
 
@@ -153,7 +183,7 @@ estimate -cluster 1
 # -maxiter # : maximum iteration
 
 optimize -cluster 1 -s2 0.7
-# i.e. use cluster 1 AND S2 > 0.7 for optimization
+# i.e. use cluster 1 AND S2 > 0.7 for optimization of diffusion tensor
 
 # FITTING AND SELECTING MODELS
 #
@@ -220,12 +250,12 @@ Output will be like:
 
 ### Estimating and optimizing diffusion tensor
 
-| diffusion tensor  | parameter(s)        | eMF symbol |
-|-------------------|---------------------|------------|
-| isotropic         | tc                  | I          |
-| axially symmetric | tc, Dr              | A          |
-| anisotropic       | tc, Dr, phi, theta  | N          |
-| distributed       | (datafile)          | D          |
+| diffusion tensor  | parameter(s)                    | eMF command |
+|-------------------|---------------------------------|-------------|
+| isotropic         | tc                              | I           |
+| axially symmetric | tc, Dr, phi, theta              | A           |
+| anisotropic       | Dxx, Dyy, Dzz, phi, theta, psi  | N           |
+| distributed       | (datafile)                      | D           |
 
 Diffusion tensor should be determined before fitting the models.
 In general, determination of diffusion tensor is an iterative process
