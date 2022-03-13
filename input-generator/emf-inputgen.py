@@ -50,12 +50,12 @@ def get_data(datafiles):
         with open(file) as fo:
             for line in fo:
                 line = line.strip().split()
-                if line[0] == "#":
+                if line[0][0] == "#":
                     continue
                 else:
                     # check that the data file has the correct format
                     if len(line) > 1 and len(line) < 4 or len(line) > 4:
-                        print("Error: Data file has incorrect format.\n"
+                        print(file, "\nError: Data file has incorrect format.\n"
                               "Exiting now...\n")
                         sys.exit()
 
@@ -71,7 +71,7 @@ def get_data(datafiles):
                             exp_flag[0] = True
                             exp_flag.append('r2')
                         else:
-                            print("Error: Experiment type missing or "
+                            print(file, "\nError: Experiment type missing or "
                                   "incorrect file format.\nExiting now...")
                             sys.exit()
 
@@ -80,7 +80,7 @@ def get_data(datafiles):
                         try:
                             fields.append(float(line[0]))
                         except ValueError:
-                            print("Error: Experiment type missing or "
+                            print(file, "\nError: Experiment type missing or "
                                   "incorrect file format.\nExiting now...")
                             sys.exit()
 
