@@ -153,19 +153,19 @@ def write_input_file(noe, r1, r2):
         # aesthetics - not perfect but it does the trick
         if r1[i][0] < 10:
             buffer += str(r1[i][0]) + "    "
-            for j in range(1, len(r1[0])-1):
+            for j in range(1, len(r1[0])):
                 buffer += str(r1[i][j])
                 buffer += "    "
             buffer += '\n'
         elif r1[i][0] < 100:
             buffer += str(r1[i][0]) + "   "
-            for j in range(1, len(r1[0])-1):
+            for j in range(1, len(r1[0])):
                 buffer += str(r1[i][j])
                 buffer += "    "
             buffer += '\n'
         else:
             buffer += str(r1[i][0]) + "  "
-            for j in range(1, len(r1[0])-1):
+            for j in range(1, len(r1[0])):
                 buffer += str(r1[i][j])
                 buffer += "    "
             buffer += '\n'
