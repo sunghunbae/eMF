@@ -144,6 +144,14 @@ def write_input_file(noe, r1, r2):
     for i in range(0, len(noe)):
         r2[i] = r2[i][-2:]
         noe[i] = noe[i][-2:]
+
+        # If NOE value is greater than 1, substitute value to 1.000 and notify
+        # user of the change and at which residue and file
+        if float(noe[i][0]) > 1.0:
+            noe[i][0] = "1.000"
+            print(f"Attention!\nValue of NOE of residue {r1[i][0]} at "
+                  f"{r1[i][2]} is greater than 1. Value was replaced by 1.000\n")
+
         r1[i] += r2[i] + noe[i]
 
     fo = open(input_file, 'w')
