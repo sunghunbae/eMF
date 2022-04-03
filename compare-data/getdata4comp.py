@@ -12,7 +12,7 @@ see the differences in the data files without having to manually weed out the
 spins that are not present in both files.
 
 The input data files can be in two formats:
-    (1) Format required to run "emf-inputgen.py" from the eMF software
+    (1) Format required to run emf-inputgen.py
     (2) Format from the eMF digested data files
 
 
