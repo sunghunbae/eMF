@@ -123,7 +123,7 @@ par Rex   -lb 0.0 -ub  10.0 -gr 10
 # par tc    -lb 7.5 -ub   9.5 -gr 20 -cv 1e-3
 
 # diffusion tensor: axially symmetric (-A) 
-# There are two possible solutions: protate and oblate.
+# There are two possible solutions: prolate and oblate.
 #     prolate (z-axis is the largest,  Dr >1)
 #     oblate  (z-axis is the smallest, Dr <1)
 #
